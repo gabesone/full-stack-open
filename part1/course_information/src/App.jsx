@@ -4,11 +4,9 @@ const Header = ({ course }) => {
 
 const Part = ({ name, exercise }) => {
   return (
-    <div>
-      <p>
-        {name}: {exercise} exercises
-      </p>
-    </div>
+    <p>
+      {name}: {exercise} exercises
+    </p>
   );
 };
 
@@ -21,10 +19,11 @@ const Content = ({ course }) => {
     </div>
   );
 };
+
 const Total = ({ course }) => {
   const total =
     course.parts[0].exercises +
-    course.parts[2].exercises +
+    course.parts[1].exercises +
     course.parts[2].exercises;
 
   return <p>Total of exercises: {total}</p>;
