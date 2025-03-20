@@ -64,8 +64,14 @@ app.post("/api/persons", (request, response) => {
 
   console.log(note);
 
-  if (!note) {
+  if (!note.name || !note.number) {
     return response.status(400).json({ error: "name or number missing" });
+  }
+
+  const duplicateName = notes.find((person) => person.name === note.name);
+
+  if (duplicateName) {
+    return response.status(400).json({ error: "name must be unique" });
   }
 
   const newNote = {
