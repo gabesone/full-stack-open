@@ -23,22 +23,56 @@ export const App = () => {
     if (!newName) return;
 
     const nameExist = persons.find((person) => person.name === newName);
+
     if (nameExist) {
-      alert(`${newName} is already added to phonebook`);
-      return;
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const selectedPerson = persons.find(
+          (person) => person.name === newName
+        );
+
+        service
+          .updatePhoneNumber(selectedPerson.id, {
+            ...selectedPerson,
+            number: phone,
+          })
+          .then((upPerson) => {
+            const updatedPersons = persons.map((person) =>
+              person.id === upPerson.id ? upPerson : person
+            );
+
+            setPersons(updatedPersons);
+          });
+
+        setNewName("");
+        setPhone("");
+      }
+    } else {
+      const person_obj = {
+        name: newName,
+        number: phone,
+      };
+
+      service
+        .addPerson(person_obj)
+        .then((newPerson) => setPersons(persons.concat(newPerson)));
+
+      setNewName("");
+      setPhone("");
     }
+  }
 
-    const person_obj = {
-      name: newName,
-      number: phone,
-    };
-
-    service
-      .addPerson(person_obj)
-      .then((newPerson) => setPersons(persons.concat(newPerson)));
-
-    setNewName("");
-    setPhone("");
+  function handleDelete(person) {
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      service
+        .deletePerson(person.id)
+        .then((deletePerson) =>
+          setPersons(persons.filter((person) => person.id !== deletePerson.id))
+        );
+    }
   }
 
   const filteredPeople = search
@@ -62,7 +96,7 @@ export const App = () => {
         setPhone={setPhone}
       />
       <h2>Numbers</h2>
-      <Persons persons={filteredPeople} />
+      <Persons persons={filteredPeople} onHandleDelete={handleDelete} />
     </div>
   );
 };
