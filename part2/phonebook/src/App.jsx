@@ -4,12 +4,16 @@ import PersonForm from "./PersonForm";
 import Persons from "./Persons";
 import phoneService from "./services/service";
 import service from "./services/service";
+import Notification from "./Notification";
+import ErrorNotification from "./ErrorNotification";
 
 export const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [phone, setPhone] = useState("");
   const [search, setSearch] = useState("");
+  const [notification, setNotification] = useState("");
+  const [errorNotification, setErrorNotification] = useState("");
 
   useEffect(() => {
     phoneService
@@ -45,6 +49,13 @@ export const App = () => {
             );
 
             setPersons(updatedPersons);
+          })
+          .catch((error) => {
+            console.log(error.message);
+            setErrorNotification(selectedPerson.name);
+            setTimeout(() => {
+              setErrorNotification("");
+            }, 5000);
           });
 
         setNewName("");
@@ -56,9 +67,14 @@ export const App = () => {
         number: phone,
       };
 
-      service
-        .addPerson(person_obj)
-        .then((newPerson) => setPersons(persons.concat(newPerson)));
+      service.addPerson(person_obj).then((newPerson) => {
+        setPersons(persons.concat(newPerson));
+        setNotification(newPerson.name);
+
+        setTimeout(() => {
+          setNotification("");
+        }, 5000);
+      });
 
       setNewName("");
       setPhone("");
@@ -84,6 +100,10 @@ export const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={notification} />
+      <ErrorNotification errorMessage={errorNotification} />
+
       <Filter search={search} setSearch={setSearch} />
 
       <h2>add a new</h2>
