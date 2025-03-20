@@ -25,8 +25,15 @@ let notes = [
   },
 ];
 
-app.use(morgan("tiny"));
 app.use(express.json());
+
+morgan.token("content", function getContent(req) {
+  if (req.method === "POST") return JSON.stringify(req.body);
+});
+
+app.use(
+  morgan(":method :url :status :res[content-length] :response-time ms :content")
+);
 
 app.get("/api/persons", (request, response) => {
   response.json(notes);
@@ -63,8 +70,6 @@ function randomId() {
 
 app.post("/api/persons", (request, response) => {
   const note = request.body;
-
-  console.log(note);
 
   if (!note.name || !note.number) {
     return response.status(400).json({ error: "name or number missing" });
