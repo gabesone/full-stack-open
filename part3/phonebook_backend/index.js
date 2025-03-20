@@ -24,6 +24,8 @@ let notes = [
   },
 ];
 
+app.use(express.json());
+
 app.get("/api/persons", (request, response) => {
   response.json(notes);
 });
@@ -51,6 +53,30 @@ app.delete("/api/persons/:id", (request, response) => {
   notes = notes.filter((note) => note.id !== id);
 
   response.status(204).end();
+});
+
+function randomId() {
+  return String(Math.floor(Math.random() * 10000));
+}
+
+app.post("/api/persons", (request, response) => {
+  const note = request.body;
+
+  console.log(note);
+
+  if (!note) {
+    return response.status(400).json({ error: "name or number missing" });
+  }
+
+  const newNote = {
+    id: randomId(),
+    name: note.name,
+    number: note.number,
+  };
+
+  notes = notes.concat(newNote);
+
+  response.json(newNote);
 });
 
 const PORT = 3001;
