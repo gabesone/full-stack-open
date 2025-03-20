@@ -3,6 +3,7 @@ import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
 import phoneService from "./services/service";
+import service from "./services/service";
 
 export const App = () => {
   const [persons, setPersons] = useState([]);
@@ -27,8 +28,15 @@ export const App = () => {
       return;
     }
 
-    const newPerson = [...persons, { name: newName, number: phone }];
-    setPersons(newPerson);
+    const person_obj = {
+      name: newName,
+      number: phone,
+    };
+
+    service
+      .addPerson(person_obj)
+      .then((newPerson) => setPersons(persons.concat(newPerson)));
+
     setNewName("");
     setPhone("");
   }
