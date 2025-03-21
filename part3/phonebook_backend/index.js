@@ -26,6 +26,7 @@ let notes = [
 ];
 
 app.use(express.json());
+app.use(express.static("dist"));
 
 morgan.token("content", function getContent(req) {
   if (req.method === "POST") return JSON.stringify(req.body);
