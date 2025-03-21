@@ -1,3 +1,5 @@
 ## Backend phonebook from part3 exercise
 
-#### API running on: https://backend-phonebook-i8fa.onrender.com/api/persons
+#### Site running on: https://backend-phonebook-i8fa.onrender.com
+
+#### API running at: /api/persons
