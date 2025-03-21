@@ -11,6 +11,9 @@ const red_notification = {
 function ErrorNotification({ errorMessage }) {
   if (!errorMessage) return;
 
+  if (errorMessage.includes("validation failed"))
+    return <div style={red_notification}>{errorMessage}</div>;
+
   return (
     <div style={red_notification}>
       Information of {errorMessage} has already been removed from server

@@ -67,17 +67,27 @@ export const App = () => {
         number: phone,
       };
 
-      service.addPerson(person_obj).then((newPerson) => {
-        setPersons(persons.concat(newPerson));
-        setNotification(newPerson.name);
+      service
+        .addPerson(person_obj)
+        .then((newPerson) => {
+          setPersons(persons.concat(newPerson));
+          setNotification(newPerson.name);
 
-        setTimeout(() => {
-          setNotification("");
-        }, 5000);
-      });
+          setTimeout(() => {
+            setNotification("");
+          }, 5000);
 
-      setNewName("");
-      setPhone("");
+          setNewName("");
+          setPhone("");
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+          setErrorNotification(error.response.data.error);
+
+          setTimeout(() => {
+            setErrorNotification("");
+          }, 10000);
+        });
     }
   }
 
