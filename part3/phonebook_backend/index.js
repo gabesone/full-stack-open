@@ -1,32 +1,36 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
 
-let notes = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+// Models
+const Person = require("./models/person");
+
+// let notes = [
+//   {
+//     id: "1",
+//     name: "Arto Hellas",
+//     number: "040-123456",
+//   },
+//   {
+//     id: "2",
+//     name: "Ada Lovelace",
+//     number: "39-44-5323523",
+//   },
+//   {
+//     id: "3",
+//     name: "Dan Abramov",
+//     number: "12-43-234345",
+//   },
+//   {
+//     id: "4",
+//     name: "Mary Poppendieck",
+//     number: "39-23-6423122",
+//   },
+// ];
 
 app.use(express.json());
-app.use(express.static("dist"));
+// app.use(express.static("dist"));
 
 morgan.token("content", function getContent(req) {
   if (req.method === "POST") return JSON.stringify(req.body);
@@ -37,7 +41,7 @@ app.use(
 );
 
 app.get("/api/persons", (request, response) => {
-  response.json(notes);
+  Person.find({}).then((persons) => response.json(persons));
 });
 
 app.get("/info", (request, response) => {
@@ -70,27 +74,30 @@ function randomId() {
 }
 
 app.post("/api/persons", (request, response) => {
-  const note = request.body;
+  const body = request.body;
 
-  if (!note.name || !note.number) {
+  if (!body.name || !body.number) {
     return response.status(400).json({ error: "name or number missing" });
   }
 
-  const duplicateName = notes.find((person) => person.name === note.name);
+  // const duplicateName = notes.find((person) => person.name === note.name);
 
-  if (duplicateName) {
-    return response.status(400).json({ error: "name must be unique" });
-  }
+  // if (duplicateName) {
+  //   return response.status(400).json({ error: "name must be unique" });
+  // }
 
-  const newNote = {
-    id: randomId(),
-    name: note.name,
-    number: note.number,
-  };
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
 
-  notes = notes.concat(newNote);
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 
-  response.json(newNote);
+  // notes = notes.concat(newNote);
+
+  // response.json(newNote);
 });
 
 const PORT = process.env.PORT || 3001;
