@@ -52,7 +52,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
 
-  Person.findByIdAndDelete(id).then((result) => {
+  Person.findByIdAndDelete(id).then(() => {
     response.status(204).end();
   });
 });
